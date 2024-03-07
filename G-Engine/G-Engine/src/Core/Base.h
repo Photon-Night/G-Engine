@@ -1,5 +1,7 @@
 #pragma once
-#include <cstdint>
+
+#include <memory>
+
 namespace GEngine
 {
 	void InitializeCore();
@@ -7,6 +9,8 @@ namespace GEngine
 }
 
 #define BIT(x) (1 << x)
+
+#include "Assert.h"
 
 namespace GEngine {
 
