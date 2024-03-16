@@ -15,7 +15,7 @@ namespace GEngine
 	enum class PrimitiveType
 	{
 		None = 0,
-		Triangle,
+		Triangles,
 		Lines,
 	};
 
