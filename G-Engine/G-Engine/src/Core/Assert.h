@@ -16,4 +16,6 @@
 #else
 #define GE_ASSERT(...)
 #define GE_CORE_ASSERT(...)
+#define GE_ASSERT_NO_MESSAGE(...)
+#define GE_ASSERT_MESSAGE(...)
 #endif

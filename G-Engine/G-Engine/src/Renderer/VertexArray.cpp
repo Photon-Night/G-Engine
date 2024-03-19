@@ -1,7 +1,8 @@
 #include "gepch.h"
 #include "VertexArray.h"
+#include <Platform/OpenGL/OpenGLVertexArray.h>
 
-//#include "Hazel/Platform/OpenGL/OpenGLVertexArray.h"
+//#include "GEngine/Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace GEngine {
 
@@ -10,7 +11,7 @@ namespace GEngine {
 		switch (RendererAPI::Current())
 		{
 		case RendererAPIType::None:    GE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		//case RendererAPIType::OpenGL:  return std::make_shared<OpenGLVertexArray>();
+		case RendererAPIType::OpenGL:  return CreateRef<OpenGLVertexArray>();
 		}
 
 		GE_CORE_ASSERT(false, "Unknown RendererAPI");

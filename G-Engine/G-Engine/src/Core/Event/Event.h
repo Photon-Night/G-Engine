@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Base.h"
 #include <string>
+#include <functional>
 
 namespace GEngine
 {
@@ -32,7 +33,7 @@ namespace GEngine
 	class Event
 	{
 	public:
-		bool handled = false;
+		bool Handled = false;
 
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
@@ -60,7 +61,7 @@ namespace GEngine
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.handled = func(*(T*)&m_Event);
+				m_Event.Handled = func(*(T*)&m_Event);
 				return true;
 			}
 			return false;

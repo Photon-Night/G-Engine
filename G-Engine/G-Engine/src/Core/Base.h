@@ -2,16 +2,27 @@
 
 #include <memory>
 
-namespace GEngine
-{
+namespace GEngine {
+
 	void InitializeCore();
 	void ShutdownCore();
+
 }
+
+#ifndef GE_PLATFORM_WINDOWS
+#error GEngine only supports Windows!
+#endif
+
+// __VA_ARGS__ expansion to get past MSVC "bug"
+#define GE_EXPAND_VARGS(x) x
 
 #define BIT(x) (1 << x)
 
+#define GE_BIND_EVENT_FN(fn) std::bind(&##fn, this, std::placeholders::_1)
+
 #include "Assert.h"
 
+// Pointer wrappers
 namespace GEngine {
 
 	template<typename T>

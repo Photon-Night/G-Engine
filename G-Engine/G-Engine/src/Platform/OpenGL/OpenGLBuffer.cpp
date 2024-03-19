@@ -24,7 +24,7 @@ namespace GEngine
 
 		Renderer::Submit([this]() {
 			glCreateBuffers(1, &m_RendererID);
-			glNamedBufferData(m_RendererID, m_Size, m_LocalData.data, OpenGLUsage(m_Usage));
+			glNamedBufferData(m_RendererID, m_Size, m_LocalData.Data, OpenGLUsage(m_Usage));
 		});
 	}
 
@@ -50,7 +50,7 @@ namespace GEngine
 		m_Size = size;
 
 		Renderer::Submit([this, offset]() {
-			glNamedBufferSubData(m_RendererID, offset, m_Size, m_LocalData.data);
+			glNamedBufferSubData(m_RendererID, offset, m_Size, m_LocalData.Data);
 		});
 	}
 
@@ -68,7 +68,7 @@ namespace GEngine
 
 		Renderer::Submit([this]() {
 			glCreateBuffers(1, &m_RendererID);
-			glNamedBufferData(m_RendererID, m_Size, m_LocalData.data, GL_STATIC_DRAW);
+			glNamedBufferData(m_RendererID, m_Size, m_LocalData.Data, GL_STATIC_DRAW);
 		});
 	}
 
@@ -84,7 +84,7 @@ namespace GEngine
 		m_LocalData = Buffer::Copy(data, size);
 		m_Size = size;
 		Renderer::Submit([this, offset]() {
-			glNamedBufferSubData(m_RendererID, offset, m_Size, m_LocalData.data);
+			glNamedBufferSubData(m_RendererID, offset, m_Size, m_LocalData.Data);
 		});
 	}
 

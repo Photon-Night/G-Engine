@@ -12,8 +12,8 @@ namespace GEngine
 {
 	struct ApplicationProps
 	{
-		std::string name;
-		uint32_t windowWidth, windowHeight;
+		std::string Name;
+		uint32_t WindowWidth, WindowHeight;
 	};
 
 	class Application
@@ -24,8 +24,8 @@ namespace GEngine
 
 		void Run();
 
-		virtual void OnInit();
-		virtual void OnShutdown();
+		virtual void OnInit() {};
+		virtual void OnShutdown() {};
 		virtual void OnUpdate(Timestep delta) {}
 
 		virtual void OnEvent(Event& event);
@@ -45,7 +45,7 @@ namespace GEngine
 
 	private:
 		Scope<Window> m_Window;
-		bool m_IsRuning = true, m_Minimized = false;
+		bool m_Running = true, m_Minimized = false;
 		LayerStack m_LayerStack;
 		Timestep m_Timestep;
 

@@ -6,17 +6,17 @@ namespace GEngine
 {
 	struct Buffer
 	{
-		byte* data;
-		uint32_t m_Size;
+		byte* Data;
+		uint32_t Size;
 
 		Buffer()
-			:data(nullptr), m_Size(0)
+			:Data(nullptr), Size(0)
 		{
 
 		}
 
 		Buffer(byte* data, uint32_t size)
-			:data(data), m_Size(size)
+			:Data(data), Size(size)
 		{
 
 		}
@@ -25,45 +25,45 @@ namespace GEngine
 		{
 			Buffer buffer;
 			buffer.Allocate(size);
-			memcpy(buffer.data, data, size);
+			memcpy(buffer.Data, data, size);
 			return buffer;
 		}
 
 		void Allocate(uint32_t size)
 		{
-			delete[] data;
-			data = nullptr;
+			delete[] Data;
+			Data = nullptr;
 
 			if(size == 0) return;
 
-			data = new byte[size];
-			this->m_Size = size;
+			Data = new byte[size];
+			this->Size = size;
 		}
 
 		void MemSetZero()
 		{
-			if(data) memset(data, 0, m_Size);
+			if(Data) memset(Data, 0, Size);
 		}
 
 		void Write(void* data, uint32_t size, uint32_t offset = 0)
 		{
-			GE_CORE_ASSERT(offset + size <= this->size, "Buffer overflow");
-			memcpy(this->data + offset, data, size);
+			GE_CORE_ASSERT(offset + size <= this->Size, "Buffer overflow");
+			memcpy(this->Data + offset, data, size);
 		}
 
 		operator bool() const
 		{
-			return data;
+			return Data;
 		}
 
 		byte& operator[](int index)
 		{
-			return data[index];
+			return Data[index];
 		}
 
 		byte operator[](int index) const
 		{
-			return data[index];
+			return Data[index];
 		}
 
 		template<typename T>
@@ -72,7 +72,7 @@ namespace GEngine
 			return (T*)data;
 		}
 
-		inline uint32_t GetSize() const { return m_Size; }
+		inline uint32_t GetSize() const { return Size; }
 	};
 	
 }

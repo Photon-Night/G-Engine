@@ -64,4 +64,51 @@ namespace GEngine
 	{
 		return s_Data.m_ShaderLib;
 	}
+
+	void Renderer::Clear()
+	{
+		Renderer::Submit([]() {
+			RendererAPI::Clear(1.0f, 1.0f, 1.0f, 1.0f);
+		});
+	}
+
+	void Renderer::Clear(float r, float g, float b, float a)
+	{
+		Renderer::Submit([=]() {
+			RendererAPI::Clear(r, g, b, a);
+		});
+	}
+
+	void Renderer::ClearMagenta()
+	{
+		Clear(1, 0, 1);
+	}
+
+	void Renderer::SetClearColor(float r, float g, float b, float a)
+	{
+	}
+
+	void Renderer::DrawIndexed(uint32_t count, PrimitiveType type, bool depthTest)
+	{
+		Renderer::Submit([=]() {
+			RendererAPI::DrawIndexed(count, type, depthTest);
+			});
+	}
+
+	void Renderer::SetLineThickness(float thickness)
+	{
+		Renderer::Submit([=]() {
+			RendererAPI::SetLineThickness(thickness);
+			});
+	}
+
+	void Renderer::WaitAndRender()
+	{
+		s_Data.m_CommandQueue.Execute();
+	}
+
+	RenderCommandQueue& Renderer::GetRenderCommandQueue()
+	{
+		return s_Data.m_CommandQueue;
+	}
 }

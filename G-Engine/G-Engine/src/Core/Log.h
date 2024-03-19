@@ -6,7 +6,6 @@
 
 namespace GEngine
 {
-	
 	class Log
 	{
 	public:
@@ -18,7 +17,7 @@ namespace GEngine
 		static Ref<spdlog::logger> s_CoreLogger;
 		static Ref<spdlog::logger> s_ClientLogger;
 	};
-
+}
 // Core Logging Macros
 #define GE_CORE_TRACE(...)	GEngine::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define GE_CORE_INFO(...)	GEngine::Log::GetCoreLogger()->info(__VA_ARGS__)
@@ -32,7 +31,7 @@ namespace GEngine
 #define GE_WARN(...)	GEngine::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define GE_ERROR(...)	GEngine::Log::GetClientLogger()->error(__VA_ARGS__)
 #define GE_FATAL(...)	GEngine::Log::GetClientLogger()->critical(__VA_ARGS__)
-}
+
 
 
 

@@ -16,5 +16,4 @@
 #include <Core/Base.h>
 #include <Core/Log.h>
 #include <Core/Event/Event.h>
-#include <Core/Assert.h>
 
