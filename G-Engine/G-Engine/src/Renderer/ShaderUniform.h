@@ -24,7 +24,7 @@ namespace GEngine
 		virtual uint32_t GetSize() const = 0;
 		virtual uint32_t GetCount() const = 0;
 		virtual uint32_t GetOffset() const = 0;
-		virtual uint32_t GetDomain() const = 0;
+		virtual ShaderDomain GetDomain() const = 0;
 	protected:
 		virtual void SetOffset(uint32_t offset);
 	};
