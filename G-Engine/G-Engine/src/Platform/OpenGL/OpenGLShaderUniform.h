@@ -41,6 +41,7 @@ namespace GEngine
 		enum class Type
 		{
 			None = 0,
+			Int32,
 			Float32,
 			Vec2,
 			Vec3,
