@@ -90,5 +90,5 @@ namespace GEngine
 		virtual uint32_t GetCount() const = 0;
 	};
 
-	typedef std::vector<ShaderResourceDeclaration> ShaderResourceList;
+	typedef std::vector<ShaderResourceDeclaration*> ShaderResourceList;
 }
