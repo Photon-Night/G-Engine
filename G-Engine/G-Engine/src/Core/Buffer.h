@@ -47,7 +47,7 @@ namespace GEngine
 
 		void Write(void* data, uint32_t size, uint32_t offset = 0)
 		{
-			GE_CORE_ASSERT(offset + size <= this->Size, "Buffer overflow");
+			//GE_CORE_ASSERT(offset + size <= this->Size, "Buffer overflow");
 			memcpy(this->Data + offset, data, size);
 		}
 

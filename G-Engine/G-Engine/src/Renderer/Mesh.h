@@ -62,9 +62,6 @@ namespace GEngine
 		Mesh(const std::string& filename);
 		~Mesh();
 
-		void OnUpdate(Timestep ts);
-		void DumpVertexBuffer();
-
 		std::vector<Submesh>& GetSubmeshes() { return m_Submeshes; }
 		const std::vector<Submesh>& GetSubmeshes() const { return m_Submeshes; }
 
@@ -76,7 +73,6 @@ namespace GEngine
 
 		const std::vector<Triangle> GetTriangleCache(uint32_t index) const { return m_TriangleCache.at(index); }
 	private:
-		void ReadNodeHierarchy(float AnimationTime, const aiNode* pNode, const glm::mat4& ParentTransform);
 		void TraverseNodes(aiNode* node, const glm::mat4& parentTransform = glm::mat4(1.0f), uint32_t level = 0);
 
 		

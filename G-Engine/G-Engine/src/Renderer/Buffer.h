@@ -41,7 +41,7 @@ namespace GEngine
 		case ShaderDataType::Bool:     return 1;
 		}
 
-		GE_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		//GE_CORE_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}
 
@@ -77,7 +77,7 @@ namespace GEngine
 			case ShaderDataType::Bool:    return 1;
 			}
 
-			GE_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			//GE_CORE_ASSERT(false, "Unknown ShaderDataType!");
 			return 0;
 		}
 	};

@@ -1,5 +1,6 @@
 #include "gepch.h"
 #include "Shader.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace GEngine
 {
@@ -12,7 +13,7 @@ namespace GEngine
 		switch (RendererAPI::Current())
 		{
 		case RendererAPIType::None: return nullptr;
-		//case RendererAPIType::OpenGL: result = std::make_shared<OpenGLShader>(filepath);
+		case RendererAPIType::OpenGL: result = std::make_shared<OpenGLShader>(filepath);
 		}
 		s_AllShaders.push_back(result);
 		return result;

@@ -26,7 +26,7 @@ namespace GEngine
 		virtual uint32_t GetOffset() const = 0;
 		virtual ShaderDomain GetDomain() const = 0;
 	protected:
-		virtual void SetOffset(uint32_t offset);
+		virtual void SetOffset(uint32_t offset) = 0;
 	};
 	typedef std::vector<ShaderUniformDeclaration*> ShaderUniformList;
 	

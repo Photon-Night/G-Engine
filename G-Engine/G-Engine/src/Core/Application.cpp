@@ -49,7 +49,7 @@ namespace GEngine
 
 	void Application::Run()
 	{
-		//OnInit();
+		OnInit();
 		while (m_Running)
 		{
 			if (!m_Minimized)
@@ -71,7 +71,7 @@ namespace GEngine
 			m_LastFrameTime = time;
 		}
 
-		//OnShutdown();
+		OnShutdown();
 	}
 
 	void Application::OnEvent(Event& event)
@@ -96,13 +96,15 @@ namespace GEngine
 			m_Minimized = true;
 			return false;
 		}
-		GE_CORE_TRACE("Window Resize width {0} height {1}", width, height);
 		m_Minimized = false;
-		Renderer::Submit([=]() {
-			glViewport(0, 0, width, height);
-		});
-		
-		return true;
+		Renderer::Submit([=]() { glViewport(0, 0, width, height); });
+		auto& fbs = FramebufferPool::GetGlobal()->GetAll();
+		for (auto& fb : fbs)
+		{
+			if (auto fbp = fb.lock())
+				fbp->Resize(width, height);
+		}
+		return false;
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)

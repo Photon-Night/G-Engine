@@ -4,6 +4,7 @@
 #include "RendererAPI.h"
 #include "Shader.h"
 #include "VertexArray.h"
+#include "SceneRenderer.h"
 
 namespace GEngine
 {
@@ -24,6 +25,9 @@ namespace GEngine
 		s_Data.m_ShaderLib = CreateScope<ShaderLibrary>();
 		Renderer::Submit([]() {RendererAPI::Init();});
 
+		Renderer::GetShaderLibrary()->Load("assets/shaders/HazelPBR_Static.glsl");
+		SceneRenderer::Init();
+		
 		float x = -1;
 		float y = -1;
 		float width = 2, height = 2;
@@ -69,7 +73,7 @@ namespace GEngine
 	void Renderer::Clear()
 	{
 		Renderer::Submit([]() {
-			RendererAPI::Clear(1.0f, 1.0f, 1.0f, 1.0f);
+			RendererAPI::Clear(0.0f, 0.0f, 0.0f, 1.0f);
 		});
 	}
 
@@ -117,7 +121,6 @@ namespace GEngine
 	{
 		GE_CORE_ASSERT(renderPass, "Render pass cannot be null!");
 
-		// TODO: Convert all of this into a render command buffer
 		s_Data.m_ActiveRenderPass = renderPass;
 
 		renderPass->GetSpecification().TargetFramebuffer->Bind();
@@ -126,7 +129,7 @@ namespace GEngine
 			const glm::vec4& clearColor = renderPass->GetSpecification().TargetFramebuffer->GetSpecification().ClearColor;
 			Renderer::Submit([=]() {
 				RendererAPI::Clear(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-				});
+			});
 		}
 	}
 

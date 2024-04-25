@@ -82,7 +82,7 @@ namespace GEngine
 
 		m_Scene = scene;
 
-		m_MeshShader = Renderer::GetShaderLibrary()->Get("PBR_Static");
+		m_MeshShader = Renderer::GetShaderLibrary()->Get("HazelPBR_Static");
 		m_BaseMaterial = CreateRef<Material>(m_MeshShader);
 		// m_MaterialInstance = std::make_shared<MaterialInstance>(m_BaseMaterial);
 		m_InverseTransform = glm::inverse(Mat4FromAssimpMat4(scene->mRootNode->mTransformation));
@@ -325,5 +325,24 @@ namespace GEngine
 
 		auto ib = IndexBuffer::Create(m_Indices.data(), m_Indices.size() * sizeof(Index));
 		m_VertexArray->SetIndexBuffer(ib);
+	}
+	Mesh::~Mesh()
+	{
+	}
+
+	void Mesh::TraverseNodes(aiNode* node, const glm::mat4& parentTransform, uint32_t level)
+	{
+		glm::mat4 transform = parentTransform * Mat4FromAssimpMat4(node->mTransformation);
+		for (uint32_t i = 0; i < node->mNumMeshes; i++)
+		{
+			uint32_t mesh = node->mMeshes[i];
+			auto& submesh = m_Submeshes[mesh];
+			submesh.NodeName = node->mName.C_Str();
+			submesh.Transform = transform;
+		}
+
+		
+		for (uint32_t i = 0; i < node->mNumChildren; i++)
+			TraverseNodes(node->mChildren[i], transform, level + 1);
 	}
 }
