@@ -6,6 +6,7 @@
 
 #include <glad/glad.h>
 #include "stb_image.h"
+
 namespace GEngine
 {
 	static GLenum TextureFormatToOpenGLTextureFormat(TextureFormat format)

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Core/Base.h"
 #include "Core/Buffer.h"
 #include "RendererAPI.h"

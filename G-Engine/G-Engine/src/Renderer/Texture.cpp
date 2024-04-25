@@ -6,12 +6,12 @@
 
 namespace GEngine
 {
-	Ref<Texture2D> Texture2D::Create(TextureFormat format, unsigned int width, unsigned int height, TextureWrap wrap)
+	Ref<Texture2D> Texture2D::Create(TextureFormat format, uint32_t width, uint32_t height, TextureWrap wrap)
 	{
 		switch (RendererAPI::Current())
 		{
-		case RendererAPIType::None: return nullptr;
-		case RendererAPIType::OpenGL: return CreateRef<OpenGLTexture2D>(format, width, height, wrap);
+			case RendererAPIType::None: return nullptr;
+			case RendererAPIType::OpenGL: return CreateRef<OpenGLTexture2D>(format, width, height, wrap);
 		}
 		return nullptr;
 	}
@@ -20,8 +20,8 @@ namespace GEngine
 	{
 		switch (RendererAPI::Current())
 		{
-		case RendererAPIType::None: return nullptr;
-		case RendererAPIType::OpenGL: return CreateRef<OpenGLTexture2D>(path, srgb);
+			case RendererAPIType::None: return nullptr;
+			case RendererAPIType::OpenGL: return CreateRef<OpenGLTexture2D>(path, srgb);
 		}
 		return nullptr;
 	}
@@ -30,8 +30,8 @@ namespace GEngine
 	{
 		switch (RendererAPI::Current())
 		{
-		case RendererAPIType::None: return nullptr;
-		case RendererAPIType::OpenGL: return CreateRef<OpenGLTextureCube>(format, width, height);
+			case RendererAPIType::None: return nullptr;
+			case RendererAPIType::OpenGL: return CreateRef<OpenGLTextureCube>(format, width, height);
 		}
 		return nullptr;
 	}
@@ -40,8 +40,8 @@ namespace GEngine
 	{
 		switch (RendererAPI::Current())
 		{
-		case RendererAPIType::None: return nullptr;
-		case RendererAPIType::OpenGL: return CreateRef<OpenGLTextureCube>(path);
+			case RendererAPIType::None: return nullptr;
+			case RendererAPIType::OpenGL: return CreateRef<OpenGLTextureCube>(path);
 		}
 		return nullptr;
 	}
@@ -50,8 +50,8 @@ namespace GEngine
 	{
 		switch (format)
 		{
-		case TextureFormat::RGB:    return 3;
-		case TextureFormat::RGBA:   return 4;
+			case TextureFormat::RGB:    return 3;
+			case TextureFormat::RGBA:   return 4;
 		}
 		return 0;
 	}

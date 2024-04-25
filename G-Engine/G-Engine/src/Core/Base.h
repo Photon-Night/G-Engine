@@ -42,5 +42,4 @@ namespace GEngine {
 	}
 
 	using byte = uint8_t;
-
 }

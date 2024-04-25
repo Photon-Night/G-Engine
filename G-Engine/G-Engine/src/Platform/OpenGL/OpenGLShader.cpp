@@ -164,20 +164,8 @@ namespace GEngine
 		return nullptr;
 	}
 
-	std::vector<std::string> Tokenize(const std::string& string)
-	{
-		return SplitString(string, " \t\n");
-	}
+	
 
-	std::vector<std::string> GetLines(const std::string& string)
-	{
-		return SplitString(string, "\n");
-	}
-
-	std::vector<std::string> SplitString(const std::string& string, const char delimiter)
-	{
-		return SplitString(string, std::string(1, delimiter));
-	}
 
 	std::vector<std::string> SplitString(const std::string& string, const std::string& delimiters)
 	{
@@ -202,6 +190,11 @@ namespace GEngine
 		return result;
 	}
 
+	std::vector<std::string> SplitString(const std::string& string, const char delimiter)
+	{
+		return SplitString(string, std::string(1, delimiter));
+	}
+
 	std::string GetBlock(const char* str, const char** outPosition)
 	{
 		const char* end = strstr(str, "}");
@@ -212,6 +205,16 @@ namespace GEngine
 			*outPosition = end;
 		uint32_t length = end - str + 1;
 		return std::string(str, length);
+	}
+
+	std::vector<std::string> Tokenize(const std::string& string)
+	{
+		return SplitString(string, " \t\n");
+	}
+
+	std::vector<std::string> GetLines(const std::string& string)
+	{
+		return SplitString(string, "\n");
 	}
 
 	std::string GetStatement(const char* str, const char** outPosition)
@@ -536,18 +539,6 @@ namespace GEngine
 			GE_CORE_WARN("Could not find uniform '{0}' in shader", name);
 
 		return result;
-	}
-
-	GLenum OpenGLShader::ShaderTypeFromString(const std::string& type)
-	{
-		if (type == "vertex")
-			return GL_VERTEX_SHADER;
-		if (type == "fragment" || type == "pixel")
-			return GL_FRAGMENT_SHADER;
-		if (type == "compute")
-			return GL_COMPUTE_SHADER;
-
-		return GL_NONE;
 	}
 
 	void OpenGLShader::CompileAndUploadShader()

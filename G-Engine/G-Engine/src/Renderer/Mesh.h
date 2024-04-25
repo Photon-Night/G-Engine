@@ -58,6 +58,7 @@ namespace GEngine
 
 	class Mesh
 	{
+	public:
 		Mesh(const std::string& filename);
 		~Mesh();
 

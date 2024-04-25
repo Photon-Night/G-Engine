@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderer/Framebuffer.h"
+#include "Core/Base.h"
 
 namespace GEngine
 {

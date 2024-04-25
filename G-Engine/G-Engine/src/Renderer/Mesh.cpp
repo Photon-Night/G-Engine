@@ -186,7 +186,7 @@ namespace GEngine
 				bool hasAlbedoMap = aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexPath) == AI_SUCCESS;
 				if (hasAlbedoMap)
 				{
-					// TODO: Temp - this should be handled by Hazel's filesystem
+					// TODO: Temp - this should be handled by GEngine's filesystem
 					std::filesystem::path path = filename;
 					auto parentPath = path.parent_path();
 					parentPath /= std::string(aiTexPath.data);
@@ -216,7 +216,7 @@ namespace GEngine
 				mi->Set("u_NormalTexToggle", 0.0f);
 				if (aiMaterial->GetTexture(aiTextureType_NORMALS, 0, &aiTexPath) == AI_SUCCESS)
 				{
-					// TODO: Temp - this should be handled by Hazel's filesystem
+					// TODO: Temp - this should be handled by GEngine's filesystem
 					std::filesystem::path path = filename;
 					auto parentPath = path.parent_path();
 					parentPath /= std::string(aiTexPath.data);
