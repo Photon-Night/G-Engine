@@ -1,5 +1,5 @@
 #include <GEngine.h>
-#include <EntryPoint.h>
+#include "GEngine/EntryPoint.h"
 #include "TestLayer.h"
 
 class GEngineApplicationTest : public GEngine::Application

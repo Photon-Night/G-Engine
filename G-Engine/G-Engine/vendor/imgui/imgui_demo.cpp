@@ -1176,7 +1176,7 @@ static void ShowDemoWindowWidgets()
         static double refresh_time = 0.0;
         if (!animate || refresh_time == 0.0)
             refresh_time = ImGui::GetTime();
-        while (refresh_time < ImGui::GetTime()) // Create dummy data at fixed 60 GE rate for the demo
+        while (refresh_time < ImGui::GetTime()) // Create dummy data at fixed 60 hz rate for the demo
         {
             static float phase = 0.0f;
             values[values_offset] = cosf(phase);
