@@ -112,7 +112,6 @@ namespace GEngine {
 	public:
 		virtual ~VertexBuffer() {}
 
-		virtual void SetData(void* buffer, uint32_t size, uint32_t offset = 0) = 0;
 		virtual void Bind() const = 0;
 
 		virtual const BufferLayout& GetLayout() const = 0;

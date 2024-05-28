@@ -38,9 +38,9 @@ namespace GEngine {
 		glBindVertexArray(vao);
 
 		glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_CULL_FACE);
+
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		glFrontFace(GL_CCW);
+		glFrontFace(GL_CCW); //ÄæÊ±Õë
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -64,8 +64,6 @@ namespace GEngine {
 			GE_CORE_ERROR("OpenGL Error {0}", error);
 			error = glGetError();
 		}
-
-		LoadRequiredAssets();
 	}
 
 	void RendererAPI::Shutdown()
@@ -107,11 +105,6 @@ namespace GEngine {
 
 		if (!depthTest)
 			glEnable(GL_DEPTH_TEST);
-	}
-
-	void RendererAPI::SetLineThickness(float thickness)
-	{
-		glLineWidth(thickness);
 	}
 
 }

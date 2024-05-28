@@ -16,6 +16,7 @@ namespace GEngine {
 		Blend      = BIT(2)
 	};
 
+	//基础材质，被多个materialinstance共享，当material的参数被修改后同步给其他所有的mi（没有被mi重写）
 	class Material
 	{
 		friend class MaterialInstance;
@@ -32,7 +33,6 @@ namespace GEngine {
 		void Set(const std::string& name, const T& value)
 		{
 			auto decl = FindUniformDeclaration(name);
-			// GE_CORE_ASSERT(decl, "Could not find uniform with name '{0}'", name);
 			GE_CORE_ASSERT(decl, "Could not find uniform with name 'x'");
 			auto& buffer = GetUniformBufferTarget(decl);
 			buffer.Write((byte*)&value, decl->GetSize(), decl->GetOffset());
@@ -63,7 +63,6 @@ namespace GEngine {
 		static Ref<Material> Create(const Ref<Shader>& shader);
 	private:
 		void AllocateStorage();
-		void OnShaderReloaded();
 		void BindTextures() const;
 
 		ShaderUniformDeclaration* FindUniformDeclaration(const std::string& name);
@@ -91,9 +90,10 @@ namespace GEngine {
 		void Set(const std::string& name, const T& value)
 		{
 			auto decl = m_Material->FindUniformDeclaration(name);
+
 			if (!decl)
 				return;
-			// GE_CORE_ASSERT(decl, "Could not find uniform with name '{0}'", name);
+
 			GE_CORE_ASSERT(decl, "Could not find uniform with name 'x'");
 			auto& buffer = GetUniformBufferTarget(decl);
 			buffer.Write((byte*)& value, decl->GetSize(), decl->GetOffset());
@@ -143,7 +143,7 @@ namespace GEngine {
 		Buffer m_PSUniformStorageBuffer;
 		std::vector<Ref<Texture>> m_Textures;
 
-		// TODO: This is temporary; come up with a proper system to track overrides
+		
 		std::unordered_set<std::string> m_OverriddenValues;
 	};
 

@@ -1341,16 +1341,16 @@ namespace ImGuizmo
            bestAxisWorldDirection = axesWorldDirections[axisIndex];
 
            // corners
-           vec_t aabb[4];
+           vec_t BoundingBox[4];
 
            int secondAxis = (bestAxis + 1) % 3;
            int thirdAxis = (bestAxis + 2) % 3;
 
            for (int i = 0; i < 4; i++)
            {
-               aabb[i][3] = aabb[i][bestAxis] = 0.f;
-               aabb[i][secondAxis] = bounds[secondAxis + 3 * (i >> 1)];
-               aabb[i][thirdAxis] = bounds[thirdAxis + 3 * ((i >> 1) ^ (i & 1))];
+               BoundingBox[i][3] = BoundingBox[i][bestAxis] = 0.f;
+               BoundingBox[i][secondAxis] = bounds[secondAxis + 3 * (i >> 1)];
+               BoundingBox[i][thirdAxis] = bounds[thirdAxis + 3 * ((i >> 1) ^ (i & 1))];
            }
 
            // draw bounds
@@ -1359,8 +1359,8 @@ namespace ImGuizmo
            matrix_t boundsMVP = gContext.mModelSource * gContext.mViewProjection;
            for (int i = 0; i < 4;i++)
            {
-               ImVec2 worldBound1 = worldToPos(aabb[i], boundsMVP);
-               ImVec2 worldBound2 = worldToPos(aabb[(i+1)%4], boundsMVP);
+               ImVec2 worldBound1 = worldToPos(BoundingBox[i], boundsMVP);
+               ImVec2 worldBound2 = worldToPos(BoundingBox[(i+1)%4], boundsMVP);
                if( !IsInContextRect( worldBound1 ) || !IsInContextRect( worldBound2 ) )
                {
                    continue;
@@ -1378,7 +1378,7 @@ namespace ImGuizmo
                    //drawList->AddLine(worldBoundSS1, worldBoundSS2, 0x000000 + anchorAlpha, 3.f);
                drawList->AddLine(worldBoundSS1, worldBoundSS2, 0xAAAAAA + anchorAlpha, 2.f);
                }
-               vec_t midPoint = (aabb[i] + aabb[(i + 1) % 4] ) * 0.5f;
+               vec_t midPoint = (BoundingBox[i] + BoundingBox[(i + 1) % 4] ) * 0.5f;
                ImVec2 midBound = worldToPos(midPoint, boundsMVP);
                static const float AnchorBigRadius = 8.f;
                static const float AnchorSmallRadius = 6.f;
@@ -1414,16 +1414,16 @@ namespace ImGuizmo
                // big anchor on corners
                if (!gContext.mbUsingBounds && gContext.mbEnable && overBigAnchor && CanActivate())
                {
-                   gContext.mBoundsPivot.TransformPoint(aabb[(i + 2) % 4], gContext.mModelSource);
-                   gContext.mBoundsAnchor.TransformPoint(aabb[i], gContext.mModelSource);
+                   gContext.mBoundsPivot.TransformPoint(BoundingBox[(i + 2) % 4], gContext.mModelSource);
+                   gContext.mBoundsAnchor.TransformPoint(BoundingBox[i], gContext.mModelSource);
                    gContext.mBoundsPlan = BuildPlan(gContext.mBoundsAnchor, bestAxisWorldDirection);
                    gContext.mBoundsBestAxis = bestAxis;
                    gContext.mBoundsAxis[0] = secondAxis;
                    gContext.mBoundsAxis[1] = thirdAxis;
 
                    gContext.mBoundsLocalPivot.Set(0.f);
-                   gContext.mBoundsLocalPivot[secondAxis] = aabb[oppositeIndex][secondAxis];
-                   gContext.mBoundsLocalPivot[thirdAxis] = aabb[oppositeIndex][thirdAxis];
+                   gContext.mBoundsLocalPivot[secondAxis] = BoundingBox[oppositeIndex][secondAxis];
+                   gContext.mBoundsLocalPivot[thirdAxis] = BoundingBox[oppositeIndex][thirdAxis];
 
                    gContext.mbUsingBounds = true;
                    gContext.mBoundsMatrix = gContext.mModelSource;
@@ -1431,7 +1431,7 @@ namespace ImGuizmo
                // small anchor on middle of segment
                if (!gContext.mbUsingBounds && gContext.mbEnable && overSmallAnchor && CanActivate())
                {
-                   vec_t midPointOpposite = (aabb[(i + 2) % 4] + aabb[(i + 3) % 4]) * 0.5f;
+                   vec_t midPointOpposite = (BoundingBox[(i + 2) % 4] + BoundingBox[(i + 3) % 4]) * 0.5f;
                    gContext.mBoundsPivot.TransformPoint(midPointOpposite, gContext.mModelSource);
                    gContext.mBoundsAnchor.TransformPoint(midPoint, gContext.mModelSource);
                    gContext.mBoundsPlan = BuildPlan(gContext.mBoundsAnchor, bestAxisWorldDirection);
@@ -1441,7 +1441,7 @@ namespace ImGuizmo
                    gContext.mBoundsAxis[1] = -1;
 
                    gContext.mBoundsLocalPivot.Set(0.f);
-                   gContext.mBoundsLocalPivot[gContext.mBoundsAxis[0]] = aabb[oppositeIndex][indices[i % 2]];// bounds[gContext.mBoundsAxis[0]] * (((i + 1) & 2) ? 1.f : -1.f);
+                   gContext.mBoundsLocalPivot[gContext.mBoundsAxis[0]] = BoundingBox[oppositeIndex][indices[i % 2]];// bounds[gContext.mBoundsAxis[0]] * (((i + 1) & 2) ? 1.f : -1.f);
 
                    gContext.mbUsingBounds = true;
                    gContext.mBoundsMatrix = gContext.mModelSource;

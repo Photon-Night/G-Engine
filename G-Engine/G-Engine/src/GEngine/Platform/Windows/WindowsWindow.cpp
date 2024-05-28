@@ -41,7 +41,6 @@ namespace GEngine {
 
 		if (!s_GLFWInitialized)
 		{
-			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
 			GE_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
@@ -57,7 +56,6 @@ namespace GEngine {
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
@@ -148,22 +146,10 @@ namespace GEngine {
 			data.EventCallback(event);
 		});
 
-		m_ImGuiMouseCursors[ImGuiMouseCursor_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-		m_ImGuiMouseCursors[ImGuiMouseCursor_TextInput] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
-		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeAll] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);   // FIXME: GLFW doesn't have this.
-		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeNS] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
-		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeEW] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
-		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeNESW] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);  // FIXME: GLFW doesn't have this.
-		m_ImGuiMouseCursors[ImGuiMouseCursor_ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);  // FIXME: GLFW doesn't have this.
-		m_ImGuiMouseCursors[ImGuiMouseCursor_Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-
-		// Update window size to actual size
-		{
-			int width, height;
-			glfwGetWindowSize(m_Window, &width, &height);
-			m_Data.Width = width;
-			m_Data.Height= height;
-		}
+		int width, height;
+		glfwGetWindowSize(m_Window, &width, &height);
+		m_Data.Width = width;
+		m_Data.Height= height;
 	}
 
 	void WindowsWindow::Shutdown()
@@ -183,13 +169,7 @@ namespace GEngine {
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
 
-		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-		glfwSetCursor(m_Window, m_ImGuiMouseCursors[imgui_cursor] ? m_ImGuiMouseCursors[imgui_cursor] : m_ImGuiMouseCursors[ImGuiMouseCursor_Arrow]);
-		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
-		float time = glfwGetTime();
-		float delta = time - m_LastFrameTime;
-		m_LastFrameTime = time;
+		m_LastFrameTime = glfwGetTime();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

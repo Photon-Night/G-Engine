@@ -1,6 +1,5 @@
 #pragma once
 
-// From glfw3.h
 #define GE_KEY_SPACE              32
 #define GE_KEY_APOSTROPHE         39  /* ' */
 #define GE_KEY_COMMA              44  /* , */
@@ -52,7 +51,7 @@
 #define GE_KEY_WORLD_1            161 /* non-US #1 */
 #define GE_KEY_WORLD_2            162 /* non-US #2 */
 
-/* Function keys */
+
 #define GE_KEY_ESCAPE             256
 #define GE_KEY_ENTER              257
 #define GE_KEY_TAB                258

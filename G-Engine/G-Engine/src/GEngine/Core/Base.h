@@ -13,7 +13,6 @@ namespace GEngine {
 	#error GEngine only supports Windows!
 #endif
 
-// __VA_ARGS__ expansion to get past MSVC "bug"
 #define GE_EXPAND_VARGS(x) x
 
 #define BIT(x) (1 << x)
@@ -22,7 +21,6 @@ namespace GEngine {
 
 #include "Assert.h"
 
-// Pointer wrappers
 namespace GEngine {
 
 	template<typename T>

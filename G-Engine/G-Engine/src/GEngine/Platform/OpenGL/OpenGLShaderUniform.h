@@ -59,28 +59,18 @@ namespace GEngine {
 		inline uint32_t GetSize() const override { return m_Size; }
 		inline uint32_t GetCount() const override { return m_Count; }
 		inline uint32_t GetOffset() const override { return m_Offset; }
-		inline uint32_t GetAbsoluteOffset() const { return m_Struct ? m_Struct->GetOffset() + m_Offset : m_Offset; }
 		inline ShaderDomain GetDomain() const { return m_Domain; }
 
 		int32_t GetLocation() const { return m_Location; }
 		inline Type GetType() const { return m_Type; }
 		inline bool IsArray() const { return m_Count > 1; }
-		inline const ShaderStruct& GetShaderUniformStruct() const { GE_CORE_ASSERT(m_Struct, ""); return *m_Struct; }
+		inline const ShaderStruct& GetShaderUniformStruct() const { return *m_Struct; }
 	protected:
 		void SetOffset(uint32_t offset) override;
 	public:
 		static uint32_t SizeOfUniformType(Type type);
 		static Type StringToType(const std::string& type);
 		static std::string TypeToString(Type type);
-	};
-
-	struct GLShaderUniformField
-	{
-		OpenGLShaderUniformDeclaration::Type type;
-		std::string name;
-		uint32_t count;
-		mutable uint32_t size;
-		mutable int32_t location;
 	};
 
 	class OpenGLShaderUniformBufferDeclaration : public ShaderUniformBufferDeclaration

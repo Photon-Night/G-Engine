@@ -21,14 +21,12 @@ namespace GEngine {
 
 }
 
-// Core Logging Macros
 #define GE_CORE_TRACE(...)	GEngine::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define GE_CORE_INFO(...)	GEngine::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define GE_CORE_WARN(...)	GEngine::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define GE_CORE_ERROR(...)	GEngine::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define GE_CORE_FATAL(...)	GEngine::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
-// Client Logging Macros
 #define GE_TRACE(...)	GEngine::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define GE_INFO(...)	GEngine::Log::GetClientLogger()->info(__VA_ARGS__)
 #define GE_WARN(...)	GEngine::Log::GetClientLogger()->warn(__VA_ARGS__)

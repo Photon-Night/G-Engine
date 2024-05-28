@@ -78,7 +78,6 @@ namespace GEngine {
 
 		Renderer::Submit([=]()
 		{
-			// TODO: Consolidate properly
 			if (srgb)
 			{
 				glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -145,9 +144,6 @@ namespace GEngine {
 		GE_CORE_ASSERT(m_Locked, "Texture must be locked!");
 
 		m_ImageData.Allocate(width * height * Texture::GetBPP(m_Format));
-#if GE_DEBUG
-		m_ImageData.ZeroInitialize();
-#endif
 	}
 
 	Buffer OpenGLTexture2D::GetWriteableBuffer()
@@ -181,8 +177,6 @@ namespace GEngine {
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-			// glTextureParameterf(m_RendererID, GL_TEXTURE_MAX_ANISOTROPY, 16);
 		});
 	}
 
@@ -203,7 +197,7 @@ namespace GEngine {
 
 		std::array<unsigned char*, 6> faces;
 		for (size_t i = 0; i < faces.size(); i++)
-			faces[i] = new unsigned char[faceWidth * faceHeight * 3]; // 3 BPP
+			faces[i] = new unsigned char[faceWidth * faceHeight * 3]; // 3 RGB
 
 		int faceIndex = 0;
 
@@ -225,7 +219,7 @@ namespace GEngine {
 
 		for (size_t i = 0; i < 3; i++)
 		{
-			// Skip the middle one
+			// 跳过中间的
 			if (i == 1)
 				continue;
 
@@ -246,7 +240,7 @@ namespace GEngine {
 		Renderer::Submit([=]() {
 			glGenTextures(1, &m_RendererID);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
-
+			//设置环绕及过滤
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -255,6 +249,8 @@ namespace GEngine {
 			glTextureParameterf(m_RendererID, GL_TEXTURE_MAX_ANISOTROPY, RendererAPI::GetCapabilities().MaxAnisotropy);
 
 			auto format = HazelToOpenGLTextureFormat(m_Format);
+
+			 
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, faceWidth, faceHeight, 0, format, GL_UNSIGNED_BYTE, faces[2]);
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, faceWidth, faceHeight, 0, format, GL_UNSIGNED_BYTE, faces[0]);
 

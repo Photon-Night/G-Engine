@@ -45,7 +45,6 @@ namespace GEngine {
 				glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &m_ColorAttachment);
 				glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment);
 
-				// TODO: Create GEngine texture object based on format here
 				if (m_Specification.Format == FramebufferFormat::RGBA16F)
 				{
 					glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Specification.Samples, GL_RGBA16F, m_Specification.Width, m_Specification.Height, GL_FALSE);
@@ -54,8 +53,7 @@ namespace GEngine {
 				{
 					glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Specification.Samples, GL_RGBA8, m_Specification.Width, m_Specification.Height, GL_FALSE);
 				}
-				// glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				// glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				
 				glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 			}
 			else
@@ -63,7 +61,6 @@ namespace GEngine {
 				glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
 				glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
 
-				// TODO: Create GEngine texture object based on format here
 				if (m_Specification.Format == FramebufferFormat::RGBA16F)
 				{
 					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_FLOAT, nullptr);

@@ -47,7 +47,11 @@ void EditTransform(const Camera& camera, matrix_t& matrix)
 {
 	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
 	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
-	if (ImGui::IsKeyPressed(90))
+	if (
+	
+	
+	
+	::IsKeyPressed(90))
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	if (ImGui::IsKeyPressed(69))
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;

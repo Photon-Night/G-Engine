@@ -16,7 +16,6 @@ namespace GEngine {
 		OpenGLVertexBuffer(uint32_t size, VertexBufferUsage usage = VertexBufferUsage::Dynamic);
 		virtual ~OpenGLVertexBuffer();
 
-		virtual void SetData(void* data, uint32_t size, uint32_t offset = 0);
 		virtual void Bind() const;
 
 		virtual const BufferLayout& GetLayout() const override { return m_Layout; }

@@ -23,13 +23,11 @@ namespace GEngine {
 
 		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(props.Name, props.WindowWidth, props.WindowHeight)));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		m_Window->SetVSync(false);
 
 		m_ImGuiLayer = new ImGuiLayer("ImGui");
 		PushOverlay(m_ImGuiLayer);
 
 		Renderer::Init();
-		Renderer::WaitAndRender();
 	}
 
 	Application::~Application()
@@ -53,14 +51,6 @@ namespace GEngine {
 	{
 		m_ImGuiLayer->Begin();
 
-		ImGui::Begin("Renderer");
-		auto& caps = RendererAPI::GetCapabilities();
-		ImGui::Text("Vendor: %s", caps.Vendor.c_str());
-		ImGui::Text("Renderer: %s", caps.Renderer.c_str());
-		ImGui::Text("Version: %s", caps.Version.c_str());
-		ImGui::Text("Frame Time: %.2fms\n", m_TimeStep.GetMilliseconds());
-		ImGui::End();
-
 		for (Layer* layer : m_LayerStack)
 			layer->OnImGuiRender();
 
@@ -77,7 +67,6 @@ namespace GEngine {
 				for (Layer* layer : m_LayerStack)
 					layer->OnUpdate(m_TimeStep);
 
-				// Render ImGui on render thread
 				Application* app = this;
 				Renderer::Submit([app]() { app->RenderImGui(); });
 
@@ -133,10 +122,9 @@ namespace GEngine {
 
 	std::string Application::OpenFile(const std::string& filter) const
 	{
-		OPENFILENAMEA ofn;       // common dialog box structure
-		CHAR szFile[260] = { 0 };       // if using TCHAR macros
+		OPENFILENAMEA ofn;       
+		CHAR szFile[260] = { 0 };      
 
-		// Initialize OPENFILENAME
 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
 		ofn.lStructSize = sizeof(OPENFILENAME);
 		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)m_Window->GetNativeWindow());

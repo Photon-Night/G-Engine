@@ -1,6 +1,6 @@
 #include <GEngine.h>
 #include "GEngine/EntryPoint.h"
-#include "TestLayer.h"
+#include "EditorLayer.h"
 
 class GEngineApplicationTest : public GEngine::Application
 {
@@ -12,7 +12,7 @@ public:
 
 	virtual void OnInit() override
 	{
-		PushLayer(new GEngine::TestLayer());
+		PushLayer(new GEngine::EditorLayer());
 	}
 };
 

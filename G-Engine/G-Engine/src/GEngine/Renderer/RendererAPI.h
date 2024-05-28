@@ -10,7 +10,6 @@ namespace GEngine {
 		OpenGL
 	};
 
-	// TODO: move into separate header
 	enum class PrimitiveType
 	{
 		None = 0, Triangles, Lines
@@ -39,7 +38,6 @@ namespace GEngine {
 		static void SetClearColor(float r, float g, float b, float a);
 
 		static void DrawIndexed(uint32_t count, PrimitiveType type, bool depthTest = true);
-		static void SetLineThickness(float thickness);
 
 		static RenderAPICapabilities& GetCapabilities()
 		{

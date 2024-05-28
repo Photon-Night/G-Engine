@@ -11,7 +11,6 @@ namespace GEngine {
 	public:
 		~Entity();
 
-		// TODO: Move to Component
 		void SetMesh(const Ref<Mesh>& mesh) { m_Mesh = mesh; }
 		Ref<Mesh> GetMesh() { return m_Mesh; }
 
@@ -28,7 +27,6 @@ namespace GEngine {
 		std::string m_Name;
 		glm::mat4 m_Transform;
 
-		// TODO: Temp
 		Ref<Mesh> m_Mesh;
 		Ref<MaterialInstance> m_Material;
 

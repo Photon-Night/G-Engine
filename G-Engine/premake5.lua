@@ -13,7 +13,6 @@ workspace "G-Engine"
 	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
--- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["Glad"] = "G-Engine/vendor/Glad/include"
 IncludeDir["GLFW"] = "G-Engine/vendor/GLFW/include"
@@ -172,69 +171,3 @@ project "G-Enginenut"
 			'{COPY} "../G-Engine/vendor/assimp/bin/Release/assimp-vc141-mtd.dll" "%{cfg.targetdir}"'
 		}
 		
---[[project "Sandbox"
-	location "Sandbox"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
-	
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-	links 
-	{ 
-		"G-Engine"
-	}
-	
-	files 
-	{ 
-		"%{prj.name}/src/**.h", 
-		"%{prj.name}/src/**.c", 
-		"%{prj.name}/src/**.hpp", 
-		"%{prj.name}/src/**.cpp" 
-	}
-	
-	includedirs 
-	{
-		"%{prj.name}/src",
-		"G-Engine/src",
-		"G-Engine/vendor",
-		"%{IncludeDir.glm}"
-	}
-	
-	filter "system:windows"
-		systemversion "latest"
-				
-		defines 
-		{ 
-			"GE_PLATFORM_WINDOWS"
-		}
-	
-	filter "configurations:Debug"
-		defines "GE_DEBUG"
-		symbols "on"
-
-		links
-		{
-			"G-Engine/vendor/assimp/bin/Debug/assimp-vc141-mtd.lib"
-		}
-				
-	filter "configurations:Release"
-		defines "GE_RELEASE"
-		optimize "on"
-
-		links
-		{
-			"G-Engine/vendor/assimp/bin/Release/assimp-vc141-mt.lib"
-		}
-
-	filter "configurations:Dist"
-		defines "GE_DIST"
-		optimize "on"
-
-		links
-		{
-			"G-Engine/vendor/assimp/bin/Release/assimp-vc141-mt.lib"
-		}
---]]

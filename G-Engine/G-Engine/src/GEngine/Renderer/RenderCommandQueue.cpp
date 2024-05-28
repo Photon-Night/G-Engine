@@ -7,7 +7,7 @@ namespace GEngine {
 
 	RenderCommandQueue::RenderCommandQueue()
 	{
-		m_CommandBuffer = new uint8_t[10 * 1024 * 1024]; // 10mb buffer
+		m_CommandBuffer = new uint8_t[10 * 1024 * 1024];
 		m_CommandBufferPtr = m_CommandBuffer;
 		memset(m_CommandBuffer, 0, 10 * 1024 * 1024);
 	}
@@ -16,10 +16,9 @@ namespace GEngine {
 	{
 		delete[] m_CommandBuffer;
 	}
-
+	//内存排布 lamda函数体 内部函数大小（相当于offset） 内部函数指针
 	void* RenderCommandQueue::Allocate(RenderCommandFn fn, uint32_t size)
 	{
-		// TODO: alignment
 		*(RenderCommandFn*)m_CommandBufferPtr = fn;
 		m_CommandBufferPtr += sizeof(RenderCommandFn);
 
@@ -35,8 +34,6 @@ namespace GEngine {
 
 	void RenderCommandQueue::Execute()
 	{
-		//HZ_RENDER_TRACE("RenderCommandQueue::Execute -- {0} commands, {1} bytes", m_CommandCount, (m_CommandBufferPtr - m_CommandBuffer));
-
 		byte* buffer = m_CommandBuffer;
 
 		for (uint32_t i = 0; i < m_CommandCount; i++)

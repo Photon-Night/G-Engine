@@ -7,7 +7,6 @@
 
 #include "RendererAPI.h"
 #include "SceneRenderer.h"
-#include "Renderer2D.h"
 
 namespace GEngine {
 
@@ -29,11 +28,9 @@ namespace GEngine {
 		Renderer::Submit([](){ RendererAPI::Init(); });
 
 		Renderer::GetShaderLibrary()->Load("assets/shaders/HazelPBR_Static.glsl");
-		Renderer::GetShaderLibrary()->Load("assets/shaders/HazelPBR_Anim.glsl");
 
 		SceneRenderer::Init();
 
-		// Create fullscreen quad
 		float x = -1;
 		float y = -1;
 		float width = 2, height = 2;
@@ -69,8 +66,6 @@ namespace GEngine {
 
 		s_Data.m_FullscreenQuadVertexArray->AddVertexBuffer(quadVB);
 		s_Data.m_FullscreenQuadVertexArray->SetIndexBuffer(quadIB);
-
-		Renderer2D::Init();
 	}
 
 	const Scope<ShaderLibrary>& Renderer::GetShaderLibrary()
@@ -108,13 +103,6 @@ namespace GEngine {
 		});
 	}
 
-	void Renderer::SetLineThickness(float thickness)
-	{
-		Renderer::Submit([=]() {
-			RendererAPI::SetLineThickness(thickness);
-		});
-	}
-
 	void Renderer::WaitAndRender()
 	{
 		s_Data.m_CommandQueue.Execute();
@@ -124,7 +112,6 @@ namespace GEngine {
 	{
 		GE_CORE_ASSERT(renderPass, "Render pass cannot be null!");
 
-		// TODO: Convert all of this into a render command buffer
 		s_Data.m_ActiveRenderPass = renderPass;
 		
 		renderPass->GetSpecification().TargetFramebuffer->Bind();
@@ -144,22 +131,6 @@ namespace GEngine {
 		s_Data.m_ActiveRenderPass = nullptr;
 	}
 
-	void Renderer::SubmitQuad(const Ref<MaterialInstance>& material, const glm::mat4& transform)
-	{
-		bool depthTest = true;
-		if (material)
-		{
-			material->Bind();
-			depthTest = material->GetFlag(MaterialFlag::DepthTest);
-
-			auto shader = material->GetShader();
-			shader->SetMat4("u_Transform", transform);
-		}
-
-		s_Data.m_FullscreenQuadVertexArray->Bind();
-		Renderer::DrawIndexed(6, PrimitiveType::Triangles, depthTest);
-	}
-
 	void Renderer::SubmitFullscreenQuad(const Ref<MaterialInstance>& material)
 	{
 		bool depthTest = true;
@@ -175,27 +146,15 @@ namespace GEngine {
 
 	void Renderer::SubmitMesh(const Ref<Mesh>& mesh, const glm::mat4& transform, const Ref<MaterialInstance>& overrideMaterial)
 	{
-		// auto material = overrideMaterial ? overrideMaterial : mesh->GetMaterialInstance();
-		// auto shader = material->GetShader();
-		// TODO: Sort this out
 		mesh->m_VertexArray->Bind();
 
 		auto& materials = mesh->GetMaterials();
 		for (Submesh& submesh : mesh->m_Submeshes)
 		{
-			// Material
 			auto material = materials[submesh.MaterialIndex];
 			auto shader = material->GetShader();
 			material->Bind();
 
-			if (mesh->m_IsAnimated)
-			{
-				for (size_t i = 0; i < mesh->m_BoneTransforms.size(); i++)
-				{
-					std::string uniformName = std::string("u_BoneTransforms[") + std::to_string(i) + std::string("]");
-					mesh->m_MeshShader->SetMat4(uniformName, mesh->m_BoneTransforms[i]);
-				}
-			}
 			shader->SetMat4("u_Transform", transform * submesh.Transform);
 
 			Renderer::Submit([submesh, material]() {
@@ -207,44 +166,6 @@ namespace GEngine {
 				glDrawElementsBaseVertex(GL_TRIANGLES, submesh.IndexCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * submesh.BaseIndex), submesh.BaseVertex);
 			});
 		}
-	}
-
-	void Renderer::DrawAABB(const Ref<Mesh>& mesh, const glm::mat4& transform, const glm::vec4& color)
-	{
-		for (Submesh& submesh : mesh->m_Submeshes)
-		{
-			auto& aabb = submesh.BoundingBox;
-			auto aabbTransform = transform * submesh.Transform;
-			DrawAABB(aabb, aabbTransform);
-		}
-	}
-
-	void Renderer::DrawAABB(const AABB& aabb, const glm::mat4& transform, const glm::vec4& color /*= glm::vec4(1.0f)*/)
-	{
-		glm::vec4 min = { aabb.Min.x, aabb.Min.y, aabb.Min.z, 1.0f };
-		glm::vec4 max = { aabb.Max.x, aabb.Max.y, aabb.Max.z, 1.0f };
-
-		glm::vec4 corners[8] =
-		{
-			transform * glm::vec4 { aabb.Min.x, aabb.Min.y, aabb.Max.z, 1.0f },
-			transform * glm::vec4 { aabb.Min.x, aabb.Max.y, aabb.Max.z, 1.0f },
-			transform * glm::vec4 { aabb.Max.x, aabb.Max.y, aabb.Max.z, 1.0f },
-			transform * glm::vec4 { aabb.Max.x, aabb.Min.y, aabb.Max.z, 1.0f },
-
-			transform * glm::vec4 { aabb.Min.x, aabb.Min.y, aabb.Min.z, 1.0f },
-			transform * glm::vec4 { aabb.Min.x, aabb.Max.y, aabb.Min.z, 1.0f },
-			transform * glm::vec4 { aabb.Max.x, aabb.Max.y, aabb.Min.z, 1.0f },
-			transform * glm::vec4 { aabb.Max.x, aabb.Min.y, aabb.Min.z, 1.0f }
-		};
-
-		for (uint32_t i = 0; i < 4; i++)
-			Renderer2D::DrawLine(corners[i], corners[(i + 1) % 4], color);
-
-		for (uint32_t i = 0; i < 4; i++)
-			Renderer2D::DrawLine(corners[i + 4], corners[((i + 1) % 4) + 4], color);
-
-		for (uint32_t i = 0; i < 4; i++)
-			Renderer2D::DrawLine(corners[i], corners[i + 4], color);
 	}
 
 	RenderCommandQueue& Renderer::GetRenderCommandQueue()

@@ -33,14 +33,12 @@ namespace GEngine {
 		void OnEvent(Event& e);
 
 		void SetCamera(const Camera& camera);
+		void SetEnvironment(const Environment& env);
+		void SetSkybox(const Ref<TextureCube>& skybox);
 		Camera& GetCamera() { return m_Camera; }
 
-		void SetEnvironment(const Environment& environment);
-		void SetSkybox(const Ref<TextureCube>& skybox);
 
 		Light& GetLight() { return m_Light; }
-
-		float& GetSkyboxLod() { return m_SkyboxLod; }
 
 		void AddEntity(Entity* entity);
 		Entity* CreateEntity(const std::string& name = "");
@@ -52,14 +50,13 @@ namespace GEngine {
 		Light m_Light;
 		float m_LightMultiplier = 0.3f;
 
+		float m_SkyboxLod = 1.0f;
+
 		Environment m_Environment;
 		Ref<TextureCube> m_SkyboxTexture;
 		Ref<MaterialInstance> m_SkyboxMaterial;
 
-		float m_SkyboxLod = 1.0f;
-
 		friend class SceneRenderer;
-		friend class SceneHierarchyPanel;
 	};
 
 }

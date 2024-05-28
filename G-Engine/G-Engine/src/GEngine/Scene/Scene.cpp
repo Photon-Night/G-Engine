@@ -30,20 +30,10 @@ namespace GEngine {
 	{
 		m_SkyboxMaterial->Set("u_TextureLod", m_SkyboxLod);
 
-		// Update all entities
-		for (auto entity : m_Entities)
-		{
-			auto mesh = entity->GetMesh();
-			if (mesh)
-				mesh->OnUpdate(ts);
-		}
-
 		SceneRenderer::BeginScene(this);
 
-		// Render entities
 		for (auto entity : m_Entities)
 		{
-			// TODO: Should we render (logically)
 			SceneRenderer::SubmitEntity(entity);
 		}
 

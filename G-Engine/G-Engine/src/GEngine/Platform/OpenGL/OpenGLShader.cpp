@@ -21,9 +21,11 @@ namespace GEngine {
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 		: m_AssetPath(filepath)
 	{
+		//找到路径最后一个/后的字符串
 		size_t found = filepath.find_last_of("/\\");
 		m_Name = found != std::string::npos ? filepath.substr(found + 1) : filepath;
 		found = m_Name.find_last_of(".");
+		//找到.前的字符串
 		m_Name = found != std::string::npos ? m_Name.substr(0, found) : m_Name;
 
 		Reload();
@@ -57,22 +59,8 @@ namespace GEngine {
 			if (!m_IsCompute)
 			{
 				ResolveUniforms();
-				ValidateUniforms();
 			}
-
-			if (m_Loaded)
-			{
-				for (auto& callback : m_ShaderReloadedCallbacks)
-					callback();
-			}
-
-			m_Loaded = true;
 		});
-	}
-
-	void OpenGLShader::AddShaderReloadedCallback(const ShaderReloadedCallback& callback)
-	{
-		m_ShaderReloadedCallbacks.push_back(callback);
 	}
 
 	void OpenGLShader::Bind()
@@ -106,6 +94,7 @@ namespace GEngine {
 	{
 		std::unordered_map<GLenum, std::string> shaderSources;
 
+		//识别shader类型，用#type标识
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
 		size_t pos = source.find(typeToken, 0);
@@ -117,12 +106,12 @@ namespace GEngine {
 			std::string type = source.substr(begin, eol - begin);
 			GE_CORE_ASSERT(type == "vertex" || type == "fragment" || type == "pixel" || type == "compute", "Invalid shader type specified");
 
+			//找到下一个token位置以此往上为上一个token对应的源码
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 			pos = source.find(typeToken, nextLinePos);
 			auto shaderType = ShaderTypeFromString(type);
 			shaderSources[shaderType] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
 
-			// Compute shaders cannot contain other types
 			if (shaderType == GL_COMPUTE_SHADER)
 			{
 				m_IsCompute = true;
@@ -133,7 +122,6 @@ namespace GEngine {
 		return shaderSources;
 	}
 
-	// Parsing helper functions
 	const char* FindToken(const char* str, const std::string& token)
 	{
 		const char* t = str;
@@ -194,6 +182,7 @@ namespace GEngine {
 
 	std::string GetBlock(const char* str, const char** outPosition)
 	{
+		//找到第一次出现}的位置
 		const char* end = strstr(str, "}");
 		if (!end)
 			return str;
@@ -236,7 +225,6 @@ namespace GEngine {
 		auto& vertexSource = m_ShaderSource[GL_VERTEX_SHADER];
 		auto& fragmentSource = m_ShaderSource[GL_FRAGMENT_SHADER];
 
-		// Vertex Shader
 		vstr = vertexSource.c_str();
 		while (token = FindToken(vstr, "struct"))
 			ParseUniformStruct(GetBlock(token, &vstr), ShaderDomain::Vertex);
@@ -245,7 +233,6 @@ namespace GEngine {
 		while (token = FindToken(vstr, "uniform"))
 			ParseUniform(GetStatement(token, &vstr), ShaderDomain::Vertex);
 
-		// Fragment Shader
 		fstr = fragmentSource.c_str();
 		while (token = FindToken(fstr, "struct"))
 			ParseUniformStruct(GetBlock(token, &fstr), ShaderDomain::Pixel);
@@ -279,10 +266,10 @@ namespace GEngine {
 		std::vector<std::string> tokens = Tokenize(statement);
 		uint32_t index = 0;
 
-		index++; // "uniform"
+		index++;
 		std::string typeString = tokens[index++];
 		std::string name = tokens[index++];
-		// Strip ; from name if present
+		
 		if (const char* s = strstr(name.c_str(), ";"))
 			name = std::string(name.c_str(), s - name.c_str());
 
@@ -298,6 +285,7 @@ namespace GEngine {
 			count = atoi(c.c_str());
 		}
 
+		//纹理类型
 		if (IsTypeStringResource(typeString))
 		{
 			ShaderResourceDeclaration* declaration = new OpenGLShaderResourceDeclaration(OpenGLShaderResourceDeclaration::StringToType(typeString), name, count);
@@ -308,9 +296,9 @@ namespace GEngine {
 			OpenGLShaderUniformDeclaration::Type t = OpenGLShaderUniformDeclaration::StringToType(typeString);
 			OpenGLShaderUniformDeclaration* declaration = nullptr;
 
+			//结构体变量
 			if (t == OpenGLShaderUniformDeclaration::Type::NONE)
 			{
-				// Find struct
 				ShaderStruct* s = FindStruct(typeString);
 				GE_CORE_ASSERT(s, "");
 				declaration = new OpenGLShaderUniformDeclaration(domain, s, name, count);
@@ -320,30 +308,22 @@ namespace GEngine {
 				declaration = new OpenGLShaderUniformDeclaration(domain, t, name, count);
 			}
 
-			if (StartsWith(name, "r_"))
+			
+			if (domain == ShaderDomain::Vertex)
 			{
-				if (domain == ShaderDomain::Vertex)
-					((OpenGLShaderUniformBufferDeclaration*)m_VSRendererUniformBuffers.front())->PushUniform(declaration);
-				else if (domain == ShaderDomain::Pixel)
-					((OpenGLShaderUniformBufferDeclaration*)m_PSRendererUniformBuffers.front())->PushUniform(declaration);
+				if (!m_VSMaterialUniformBuffer)
+					m_VSMaterialUniformBuffer.reset(new OpenGLShaderUniformBufferDeclaration("", domain));
+
+				m_VSMaterialUniformBuffer->PushUniform(declaration);
 			}
-			else
+			else if (domain == ShaderDomain::Pixel)
 			{
-				if (domain == ShaderDomain::Vertex)
-				{
-					if (!m_VSMaterialUniformBuffer)
-						m_VSMaterialUniformBuffer.reset(new OpenGLShaderUniformBufferDeclaration("", domain));
+				if (!m_PSMaterialUniformBuffer)
+					m_PSMaterialUniformBuffer.reset(new OpenGLShaderUniformBufferDeclaration("", domain));
 
-					m_VSMaterialUniformBuffer->PushUniform(declaration);
-				}
-				else if (domain == ShaderDomain::Pixel)
-				{
-					if (!m_PSMaterialUniformBuffer)
-						m_PSMaterialUniformBuffer.reset(new OpenGLShaderUniformBufferDeclaration("", domain));
-
-					m_PSMaterialUniformBuffer->PushUniform(declaration);
-				}
+				m_PSMaterialUniformBuffer->PushUniform(declaration);
 			}
+			
 		}
 	}
 
@@ -352,10 +332,10 @@ namespace GEngine {
 		std::vector<std::string> tokens = Tokenize(block);
 
 		uint32_t index = 0;
-		index++; // struct
+		index++; // 跳过struct字符的部分
 		std::string name = tokens[index++];
 		ShaderStruct* uniformStruct = new ShaderStruct(name);
-		index++; // {
+		index++; // 跳过结构体名称后的{
 		while (index < tokens.size())
 		{
 			if (tokens[index] == "}")
@@ -364,7 +344,7 @@ namespace GEngine {
 			std::string type = tokens[index++];
 			std::string name = tokens[index++];
 
-			// Strip ; from name if present
+			// 如果中间有；只取前面的部分
 			if (const char* s = strstr(name.c_str(), ";"))
 				name = std::string(name.c_str(), s - name.c_str());
 
@@ -386,55 +366,7 @@ namespace GEngine {
 
 	void OpenGLShader::ResolveUniforms()
 	{
-		glUseProgram(m_RendererID);
-
-		for (size_t i = 0; i < m_VSRendererUniformBuffers.size(); i++)
-		{
-			OpenGLShaderUniformBufferDeclaration* decl = (OpenGLShaderUniformBufferDeclaration*)m_VSRendererUniformBuffers[i];
-			const ShaderUniformList& uniforms = decl->GetUniformDeclarations();
-			for (size_t j = 0; j < uniforms.size(); j++)
-			{
-				OpenGLShaderUniformDeclaration* uniform = (OpenGLShaderUniformDeclaration*)uniforms[j];
-				if (uniform->GetType() == OpenGLShaderUniformDeclaration::Type::STRUCT)
-				{
-					const ShaderStruct& s = uniform->GetShaderUniformStruct();
-					const auto& fields = s.GetFields();
-					for (size_t k = 0; k < fields.size(); k++)
-					{
-						OpenGLShaderUniformDeclaration* field = (OpenGLShaderUniformDeclaration*)fields[k];
-						field->m_Location = GetUniformLocation(uniform->m_Name + "." + field->m_Name);
-					}
-				}
-				else
-				{
-					uniform->m_Location = GetUniformLocation(uniform->m_Name);
-				}
-			}
-		}
-
-		for (size_t i = 0; i < m_PSRendererUniformBuffers.size(); i++)
-		{
-			OpenGLShaderUniformBufferDeclaration* decl = (OpenGLShaderUniformBufferDeclaration*)m_PSRendererUniformBuffers[i];
-			const ShaderUniformList& uniforms = decl->GetUniformDeclarations();
-			for (size_t j = 0; j < uniforms.size(); j++)
-			{
-				OpenGLShaderUniformDeclaration* uniform = (OpenGLShaderUniformDeclaration*)uniforms[j];
-				if (uniform->GetType() == OpenGLShaderUniformDeclaration::Type::STRUCT)
-				{
-					const ShaderStruct& s = uniform->GetShaderUniformStruct();
-					const auto& fields = s.GetFields();
-					for (size_t k = 0; k < fields.size(); k++)
-					{
-						OpenGLShaderUniformDeclaration* field = (OpenGLShaderUniformDeclaration*)fields[k];
-						field->m_Location = GetUniformLocation(uniform->m_Name + "." + field->m_Name);
-					}
-				}
-				else
-				{
-					uniform->m_Location = GetUniformLocation(uniform->m_Name);
-				}
-			}
-		}
+		glUseProgram(m_RendererID);		
 
 		{
 			const auto& decl = m_VSMaterialUniformBuffer;
@@ -515,11 +447,6 @@ namespace GEngine {
 		}
 	}
 
-	void OpenGLShader::ValidateUniforms()
-	{
-
-	}
-
 	int32_t OpenGLShader::GetUniformLocation(const std::string& name) const
 	{
 		int32_t result = glGetUniformLocation(m_RendererID, name.c_str());
@@ -546,6 +473,7 @@ namespace GEngine {
 		std::vector<GLuint> shaderRendererIDs;
 
 		GLuint program = glCreateProgram();
+		//编译每段shader
 		for (auto& kv : m_ShaderSource)
 		{
 			GLenum type = kv.first;
@@ -564,13 +492,11 @@ namespace GEngine {
 				GLint maxLength = 0;
 				glGetShaderiv(shaderRendererID, GL_INFO_LOG_LENGTH, &maxLength);
 
-				// The maxLength includes the NULL character
 				std::vector<GLchar> infoLog(maxLength);
 				glGetShaderInfoLog(shaderRendererID, maxLength, &maxLength, &infoLog[0]);
 
 				GE_CORE_ERROR("Shader compilation failed:\n{0}", &infoLog[0]);
 
-				// We don't need the shader anymore.
 				glDeleteShader(shaderRendererID);
 
 				GE_CORE_ASSERT(false, "Failed");
@@ -579,11 +505,9 @@ namespace GEngine {
 			shaderRendererIDs.push_back(shaderRendererID);
 			glAttachShader(program, shaderRendererID);
 		}
-
-		// Link our program
+		//连接编译好的shader
 		glLinkProgram(program);
 
-		// Note the different functions here: glGetProgram* instead of glGetShader*.
 		GLint isLinked = 0;
 		glGetProgramiv(program, GL_LINK_STATUS, (int *)&isLinked);
 		if (isLinked == GL_FALSE)
@@ -591,19 +515,15 @@ namespace GEngine {
 			GLint maxLength = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
-			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(maxLength);
 			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 			GE_CORE_ERROR("Shader compilation failed:\n{0}", &infoLog[0]);
 
-			// We don't need the program anymore.
 			glDeleteProgram(program);
-			// Don't leak shaders either.
 			for (auto id : shaderRendererIDs)
 				glDeleteShader(id);
 		}
 
-		// Always detach shaders after a successful link.
 		for (auto id : shaderRendererIDs)
 			glDetachShader(program, id);
 
@@ -632,10 +552,7 @@ namespace GEngine {
 		for (size_t i = 0; i < uniforms.size(); i++)
 		{
 			OpenGLShaderUniformDeclaration* uniform = (OpenGLShaderUniformDeclaration*)uniforms[i];
-			if (uniform->IsArray())
-				ResolveAndSetUniformArray(uniform, buffer);
-			else
-				ResolveAndSetUniform(uniform, buffer);
+			ResolveAndSetUniform(uniform, buffer);
 		}
 	}
 
@@ -678,42 +595,6 @@ namespace GEngine {
 		}
 	}
 
-	void OpenGLShader::ResolveAndSetUniformArray(OpenGLShaderUniformDeclaration* uniform, Buffer buffer)
-	{
-		//GE_CORE_ASSERT(uniform->GetLocation() != -1, "Uniform has invalid location!");
-
-		uint32_t offset = uniform->GetOffset();
-		switch (uniform->GetType())
-		{
-		case OpenGLShaderUniformDeclaration::Type::FLOAT32:
-			UploadUniformFloat(uniform->GetLocation(), *(float*)&buffer.Data[offset]);
-			break;
-		case OpenGLShaderUniformDeclaration::Type::INT32:
-			UploadUniformInt(uniform->GetLocation(), *(int32_t*)&buffer.Data[offset]);
-			break;
-		case OpenGLShaderUniformDeclaration::Type::VEC2:
-			UploadUniformFloat2(uniform->GetLocation(), *(glm::vec2*)&buffer.Data[offset]);
-			break;
-		case OpenGLShaderUniformDeclaration::Type::VEC3:
-			UploadUniformFloat3(uniform->GetLocation(), *(glm::vec3*)&buffer.Data[offset]);
-			break;
-		case OpenGLShaderUniformDeclaration::Type::VEC4:
-			UploadUniformFloat4(uniform->GetLocation(), *(glm::vec4*)&buffer.Data[offset]);
-			break;
-		case OpenGLShaderUniformDeclaration::Type::MAT3:
-			UploadUniformMat3(uniform->GetLocation(), *(glm::mat3*)&buffer.Data[offset]);
-			break;
-		case OpenGLShaderUniformDeclaration::Type::MAT4:
-			UploadUniformMat4Array(uniform->GetLocation(), *(glm::mat4*)&buffer.Data[offset], uniform->GetCount());
-			break;
-		case OpenGLShaderUniformDeclaration::Type::STRUCT:
-			UploadUniformStruct(uniform, buffer.Data, offset);
-			break;
-		default:
-			GE_CORE_ASSERT(false, "Unknown uniform type!");
-		}
-	}
-
 	void OpenGLShader::ResolveAndSetUniformField(const OpenGLShaderUniformDeclaration& field, byte* data, int32_t offset)
 	{
 		switch (field.GetType())
@@ -741,49 +622,6 @@ namespace GEngine {
 			break;
 		default:
 			GE_CORE_ASSERT(false, "Unknown uniform type!");
-		}
-	}
-
-	void OpenGLShader::UploadUniformBuffer(const UniformBufferBase& uniformBuffer)
-	{
-		for (unsigned int i = 0; i < uniformBuffer.GetUniformCount(); i++)
-		{
-			const UniformDecl& decl = uniformBuffer.GetUniforms()[i];
-			switch (decl.Type)
-			{
-				case UniformType::Float:
-				{
-					const std::string& name = decl.Name;
-					float value = *(float*)(uniformBuffer.GetBuffer() + decl.Offset);
-					Renderer::Submit([=]() {
-						UploadUniformFloat(name, value);
-					});
-				}
-				case UniformType::Float3:
-				{
-					const std::string& name = decl.Name;
-					glm::vec3& values = *(glm::vec3*)(uniformBuffer.GetBuffer() + decl.Offset);
-					Renderer::Submit([=]() {
-						UploadUniformFloat3(name, values);
-					});
-				}
-				case UniformType::Float4:
-				{
-					const std::string& name = decl.Name;
-					glm::vec4& values = *(glm::vec4*)(uniformBuffer.GetBuffer() + decl.Offset);
-					Renderer::Submit([=]() {
-						UploadUniformFloat4(name, values);
-					});
-				}
-				case UniformType::Matrix4x4:
-				{
-					const std::string& name = decl.Name;
-					glm::mat4& values = *(glm::mat4*)(uniformBuffer.GetBuffer() + decl.Offset);
-					Renderer::Submit([=]() {
-						UploadUniformMat4(name, values);
-					});
-				}
-			}
 		}
 	}
 
@@ -822,21 +660,9 @@ namespace GEngine {
 		}
 	}
 
-	void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t size)
-	{
-		Renderer::Submit([=]() {
-			UploadUniformIntArray(name, values, size);
-		});
-	}
-
 	void OpenGLShader::UploadUniformInt(uint32_t location, int32_t value)
 	{
 		glUniform1i(location, value);
-	}
-
-	void OpenGLShader::UploadUniformIntArray(uint32_t location, int32_t* values, int32_t count)
-	{
-		glUniform1iv(location, count, values);
 	}
 
 	void OpenGLShader::UploadUniformFloat(uint32_t location, float value)
@@ -867,11 +693,6 @@ namespace GEngine {
 	void OpenGLShader::UploadUniformMat4(uint32_t location, const glm::mat4& value)
 	{
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
-	}
-
-	void OpenGLShader::UploadUniformMat4Array(uint32_t location, const glm::mat4& values, uint32_t count)
-	{
-		glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(values));
 	}
 
 	void OpenGLShader::UploadUniformStruct(OpenGLShaderUniformDeclaration* uniform, byte* buffer, uint32_t offset)

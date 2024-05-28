@@ -14,6 +14,12 @@ namespace GEngine {
 
 		s_ClientLogger = spdlog::stdout_color_mt("APP");
 		s_ClientLogger->set_level(spdlog::level::trace);
+
+		GE_CORE_TRACE("Trace");
+		GE_CORE_INFO("Info");
+		GE_CORE_WARN("Warn");
+		GE_CORE_ERROR("Error");
+		GE_CORE_FATAL("Fatal");
 	}
 
 }

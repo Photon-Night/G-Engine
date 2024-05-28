@@ -41,7 +41,7 @@ namespace GEngine {
 		
 		static inline Application& Get() { return *s_Instance; }
 
-		float GetTime() const; // TODO: This should be in "Platform"
+		float GetTime() const;
 	private:
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowClose(WindowCloseEvent& e);
@@ -57,6 +57,5 @@ namespace GEngine {
 		static Application* s_Instance;
 	};
 
-	// Implemented by CLIENT
 	Application* CreateApplication();
 }

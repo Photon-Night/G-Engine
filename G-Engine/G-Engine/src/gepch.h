@@ -17,5 +17,3 @@
 #include <GEngine/Core/Base.h>
 #include <GEngine/Core/Log.h>
 #include <GEngine/Core/Events/Event.h>
-
-#include <GEngine/Core/Math/Mat4.h>

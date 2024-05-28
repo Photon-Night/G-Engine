@@ -3,10 +3,6 @@
 
 namespace GEngine {
 
-	//////////////////////////////////////////////////////////////////////////////////
-	// Material
-	//////////////////////////////////////////////////////////////////////////////////
-
 	Ref<Material> Material::Create(const Ref<Shader>& shader)
 	{
 		return std::make_shared<Material>(shader);
@@ -15,7 +11,6 @@ namespace GEngine {
 	Material::Material(const Ref<Shader>& shader)
 		: m_Shader(shader)
 	{
-		m_Shader->AddShaderReloadedCallback(std::bind(&Material::OnShaderReloaded, this));
 		AllocateStorage();
 
 		m_MaterialFlags |= (uint32_t)MaterialFlag::DepthTest;
@@ -41,15 +36,6 @@ namespace GEngine {
 			m_PSUniformStorageBuffer.Allocate(psBuffer.GetSize());
 			m_PSUniformStorageBuffer.ZeroInitialize();
 		}
-	}
-
-	void Material::OnShaderReloaded()
-	{
-		return;
-		AllocateStorage();
-		
-		for (auto mi : m_MaterialInstances)
-			mi->OnShaderReloaded();
 	}
 
 	ShaderUniformDeclaration* Material::FindUniformDeclaration(const std::string& name)

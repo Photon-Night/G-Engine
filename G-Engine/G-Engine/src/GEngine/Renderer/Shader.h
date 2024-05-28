@@ -38,12 +38,6 @@ namespace GEngine
 
 	struct UniformBuffer
 	{
-		// TODO: This currently represents a byte buffer that has been
-		// packed with uniforms. This was primarily created for OpenGL,
-		// and needs to be revisted for other rendering APIs. Furthermore,
-		// this currently does not assume any alignment. This also has
-		// nothing to do with GL uniform buffers, this is simply a CPU-side
-		// buffer abstraction.
 		byte* Buffer;
 		std::vector<UniformDecl> Uniforms;
 	};
@@ -107,35 +101,25 @@ namespace GEngine
 	class Shader
 	{
 	public:
-		using ShaderReloadedCallback = std::function<void()>;
 
 		virtual void Reload() = 0;
 
 		virtual void Bind() = 0;
 		virtual RendererID GetRendererID() const = 0;
-		virtual void UploadUniformBuffer(const UniformBufferBase& uniformBuffer) = 0;
 
-		// Temporary while we don't have materials
 		virtual void SetFloat(const std::string& name, float value) = 0;
 		virtual void SetInt(const std::string& name, int value) = 0;
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
 		virtual void SetMat4FromRenderThread(const std::string& name, const glm::mat4& value, bool bind = true) = 0;
 
-		virtual void SetIntArray(const std::string& name, int* values, uint32_t size) = 0;
-
 		virtual const std::string& GetName() const = 0;
 
-		// Represents a complete shader program stored in a single file.
-		// Note: currently for simplicity this is simply a string filepath, however
-		//       in the future this will be an asset object + metadata
 		static Ref<Shader> Create(const std::string& filepath);
 		static Ref<Shader> CreateFromString(const std::string& source);
 
 		virtual void SetVSMaterialUniformBuffer(Buffer buffer) = 0;
 		virtual void SetPSMaterialUniformBuffer(Buffer buffer) = 0;
 
-		virtual const ShaderUniformBufferList& GetVSRendererUniforms() const = 0;
-		virtual const ShaderUniformBufferList& GetPSRendererUniforms() const = 0;
 		virtual bool HasVSMaterialUniformBuffer() const = 0;
 		virtual bool HasPSMaterialUniformBuffer() const = 0;
 		virtual const ShaderUniformBufferDeclaration& GetVSMaterialUniformBuffer() const = 0;
@@ -143,13 +127,9 @@ namespace GEngine
 
 		virtual const ShaderResourceList& GetResources() const = 0;
 
-		virtual void AddShaderReloadedCallback(const ShaderReloadedCallback& callback) = 0;
-
-		// Temporary, before we have an asset manager
 		static std::vector<Ref<Shader>> s_AllShaders;
 	};
 
-	// This should be eventually handled by the Asset Manager
 	class ShaderLibrary
 	{
 	public:

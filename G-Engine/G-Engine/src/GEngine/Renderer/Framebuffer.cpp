@@ -32,7 +32,6 @@ namespace GEngine {
 
 	std::weak_ptr<Framebuffer> FramebufferPool::AllocateBuffer()
 	{
-		// m_Pool.push_back();
 		return std::weak_ptr<Framebuffer>();
 	}
 
