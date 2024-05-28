@@ -16,6 +16,11 @@ namespace GEngine
 	class EditorLayer : public Layer
 	{
 	public:
+		enum class PropertyFlag
+		{
+			None = 0, ColorProperty = 1
+		};
+	public:
 		EditorLayer();
 		virtual ~EditorLayer();
 

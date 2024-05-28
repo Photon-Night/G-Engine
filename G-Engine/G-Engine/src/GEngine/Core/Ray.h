@@ -10,7 +10,7 @@ namespace GEngine {
     {
         glm::vec3 Origin, Direction;
 
-        bool IntersectsBoundingBox(const BoundingBox& BoundingBox, float& t) const
+        bool IntersectsAABB(const BoundingBox& BoundingBox, float& t) const
         {
             glm::vec3 dirfrac;
             // r.dir is unit direction vector of ray

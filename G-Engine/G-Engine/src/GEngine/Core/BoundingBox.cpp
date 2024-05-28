@@ -10,7 +10,7 @@ namespace GEngine
 
 	void BoundingBox::DrawLine(const glm::vec3& p0, const glm::vec3& p1)
 	{
-		
+		m_LineVertexBufferPtr = p0;
 
 	}
 }

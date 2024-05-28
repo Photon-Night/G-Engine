@@ -49,6 +49,10 @@ namespace GEngine {
 
 		auto& caps = RendererAPI::GetCapabilities();
 
+		caps.Vendor = (const char*)glGetString(GL_VENDOR);
+		caps.Renderer = (const char*)glGetString(GL_RENDERER);
+		caps.Version = (const char*)glGetString(GL_VERSION);
+
 		glGetIntegerv(GL_MAX_SAMPLES, &caps.MaxSamples);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &caps.MaxAnisotropy);
 
@@ -103,8 +107,4 @@ namespace GEngine {
 			glEnable(GL_DEPTH_TEST);
 	}
 
-	void RendererAPI::SetLineThickness(float thickness)
-	{
-		glLineWidth(thickness);
-	}
 }

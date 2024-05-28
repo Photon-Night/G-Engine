@@ -56,15 +56,6 @@ namespace GEngine {
 		});
 	}
 
-	void OpenGLVertexBuffer::SetData(void* data, uint32_t size, uint32_t offset)
-	{
-		m_LocalData = Buffer::Copy(data, size);
-		m_Size = size;
-		Renderer::Submit([this, offset]() {
-			glNamedBufferSubData(m_RendererID, offset, m_Size, m_LocalData.Data);
-			});
-	}
-
 	//////////////////////////////////////////////////////////////////////////////////
 	// IndexBuffer
 	//////////////////////////////////////////////////////////////////////////////////

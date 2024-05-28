@@ -70,6 +70,21 @@ namespace GEngine
 		}
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace Demo", &p_open, window_flags);
+		ImGui::PopStyleVar();
+
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), opt_flags);
+		}
+
+		
+		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport");
@@ -143,7 +158,7 @@ namespace GEngine
 					};
 
 					float t;
-					bool intersects = ray.IntersectsBoundingBox(submesh.aabb, t);
+					bool intersects = ray.IntersectsAABB(submesh.BoundingBox, t);
 					if (intersects)
 					{
 						const auto& triangleCache = mesh->GetTriangleCache(i);

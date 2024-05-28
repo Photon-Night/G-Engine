@@ -105,7 +105,7 @@ namespace GEngine {
 			indexCount += submesh.IndexCount;
 			
 			//∂•µ„–≈œ¢
-			auto& BoundingBox = submesh.aabb;
+			auto& BoundingBox = submesh.BoundingBox;
 			BoundingBox.Min = { FLT_MAX, FLT_MAX, FLT_MAX };
 			BoundingBox.Max = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 			for (size_t i = 0; i < mesh->mNumVertices; i++)

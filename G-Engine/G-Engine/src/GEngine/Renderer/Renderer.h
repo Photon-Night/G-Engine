@@ -20,7 +20,7 @@ namespace GEngine {
 		static void ClearMagenta();
 
 		static void DrawIndexed(uint32_t count, PrimitiveType type, bool depthTest = true);
-		static void SetLineThickness(float thickness);
+
 		static void Init();
 
 		static const Scope<ShaderLibrary>& GetShaderLibrary();

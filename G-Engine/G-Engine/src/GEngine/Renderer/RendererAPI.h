@@ -17,6 +17,10 @@ namespace GEngine {
 
 	struct RenderAPICapabilities
 	{
+		std::string Vendor;
+		std::string Renderer;
+		std::string Version;
+
 		int MaxSamples = 0;
 		float MaxAnisotropy = 0.0f;
 		int MaxTextureUnits = 0;
@@ -34,7 +38,7 @@ namespace GEngine {
 		static void SetClearColor(float r, float g, float b, float a);
 
 		static void DrawIndexed(uint32_t count, PrimitiveType type, bool depthTest = true);
-		static void SetLineThickness(float thickness);
+
 		static RenderAPICapabilities& GetCapabilities()
 		{
 			static RenderAPICapabilities capabilities;
