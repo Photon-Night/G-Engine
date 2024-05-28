@@ -18,5 +18,5 @@ public:
 
 GEngine::Application* GEngine::CreateApplication()
 {
-	return new GEngineApplicationTest({ "GEngine_Test", 1600, 900 });
+	return new GEngineApplicationTest({ "GEngine", 1600, 900 });
 }

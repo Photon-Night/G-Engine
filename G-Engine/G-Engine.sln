@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
+# Visual Studio Version 16
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "G-Enginenut", "G-Enginenut\G-Enginenut.vcxproj", "{86666B7D-F21B-E472-7B10-DE49E7C4DA76}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "G-Engine", "G-Engine\G-Engine.vcxproj", "{6FC5E632-5B92-413E-84AB-2FE670D776CC}"

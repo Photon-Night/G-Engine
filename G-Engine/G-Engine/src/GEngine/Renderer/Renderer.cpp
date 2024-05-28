@@ -92,6 +92,13 @@ namespace GEngine {
 		Clear(1, 0, 1);
 	}
 
+	void Renderer::SetLineThickness(float thickness)
+	{
+		Renderer::Submit([=]() {
+			RendererAPI::SetLineThickness(thickness);
+			});
+	}
+
 	void Renderer::SetClearColor(float r, float g, float b, float a)
 	{
 	}

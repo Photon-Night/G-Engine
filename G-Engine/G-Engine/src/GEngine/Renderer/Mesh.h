@@ -55,7 +55,7 @@ namespace GEngine {
 		uint32_t IndexCount;
 
 		glm::mat4 Transform;
-		BoundingBox BoundingBox;
+		BoundingBox aabb;
 
 		std::string NodeName, MeshName;
 	};
